@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora PV Company</title>
+    <style>
+        :root {
+            --primary: #000000;
+            --success: #28a745;
+            --danger: #d93025;
+            --bg: #ffffff;
+            --border: #e0e0e0;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: #f4f4f4; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        body h1 {
+            font-size: 5vh;
+        }
+
+        .container { 
+            background: var(--bg); 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            width: 100%; 
+            max-width: 650px; 
+        }
+
+        h2 { 
+            color: var(--primary); 
+            text-align: center; 
+            margin-bottom: 25px; 
+            border-bottom: 2px solid var(--primary); 
+            padding-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .item-linha { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 12px; 
+            align-items: center;
+        }
+
+        select, input { 
+            padding: 12px; 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            font-size: 14px; 
+        }
+
+        select { flex: 3; background-color: #fff; }
+        input[type="number"] { flex: 1; min-width: 80px; }
+
+        .btn-remover { background: none; border: none; color: var(--danger); font-weight: bold; cursor: pointer; font-size: 18px; }
+
+        .btn-adicionar { 
+            background: var(--success); 
+            color: white; 
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin: 20px 0;
+        }
+
+        .btn-calcular { 
+            width: 100%; 
+            padding: 15px; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            cursor: pointer;
+        }
+
+        .resultado { 
+            margin-top: 25px; 
+            padding: 20px; 
+            background: #f9f9f9; 
+            border-radius: 10px; 
+            display: none; 
+            text-align: center; 
+            border: 1px solid #ddd;
+        }
+
+        .titulo-resposta { font-weight: bold; display: block; margin-bottom: 10px; text-decoration: underline; }
+        .resultado div { font-size: 20px; margin-bottom: 5px; }
+        .destaque-vols { color: var(--success); font-weight: bold; font-size: 28px; }
+        .destaque-peso { color: var(--danger); font-weight: bold; font-size: 28px; }
+    </style>
+</head>
+<body>
+
+    <h1 class="titulo-site">Pv Company/Estanfort</h1>
+
+<div class="container">
+    <h2>Cotação</h2>
+    
+    <div id="lista-itens"></div>
+
+    <button class="btn-adicionar" onclick="adicionarLinha()">+ Adicionar Produto</button>
+    <button class="btn-calcular" onclick="calcularTudo()">GERAR TOTAIS</button>
+
+    <div id="box-resultado" class="resultado">
+        <span class="titulo-resposta">PV Company</span>
+        <div>Volumes Totais: <span id="res-vol" class="destaque-vols">0</span></div>
+        <div>Peso Total: <span id="res-peso" class="destaque-peso">0</span> KG</div>
+    </div>
+</div>
+
+<script>
+    // PESOS REAIS (KG por unidade ou kit)
+    const PESOS = {
+        estante_leve: 10.0,
+        estante_pesada: 25.0,
+        coluna_av: 3.5, // Montante + Travessa avulso
+        prat_av: 10.0,  // Longarina
+        band_av: 12.0,
+        mdf: 15.0
+    };
+
+    function adicionarLinha() {
+        const container = document.getElementById('lista-itens');
+        const div = document.createElement('div');
+        div.className = 'item-linha';
+        div.innerHTML = `
+            <select class="prod-tipo">
+                <option value="estante_leve">Estante LINHA LEVE #26 (até 20 col/vol)</option>
+                <option value="estante_pesada">Estante LINHA PESADA #22 (até 10 col/vol)</option>
+                <option value="coluna_av">COLUNA (Montante + Travessa)</option>
+                <option value="prat_av">PRATELEIRA (Par de Longarina)</option>
+                <option value="band_av">BANDEJAS DE AÇO</option>
+                <option value="mdf">MDF Inteiriço</option>
+            </select>
+            <input type="number" class="prod-qtd" value="1" min="1">
+            <button class="btn-remover" onclick="this.parentElement.remove()">✕</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function calcularTudo() {
+        const linhas = document.querySelectorAll('.item-linha');
+        let totais = { eLeve: 0, ePesada: 0, col: 0, prat: 0, band: 0, mdf: 0 };
+
+        linhas.forEach(linha => {
+            const tipo = linha.querySelector('.prod-tipo').value;
+            const qtd = parseInt(linha.querySelector('.prod-qtd').value) || 0;
+            if (tipo === 'estante_leve') totais.eLeve += qtd;
+            if (tipo === 'estante_pesada') totais.ePesada += qtd;
+            if (tipo === 'coluna_av') totais.col += qtd;
+            if (tipo === 'prat_av') totais.prat += qtd;
+            if (tipo === 'band_av') totais.band += qtd;
+            if (tipo === 'mdf') totais.mdf += qtd;
+        });
+
+        // 1. Volumes Estante LEVE: (Colunas agrupa 20) + (1 vol bandeja por estante)
+        let vELeve = Math.ceil((totais.eLeve * 4) / 20) + totais.eLeve;
+
+        // 2. Volumes Estante PESADA: (Colunas agrupa 10) + (1 vol bandeja por estante)
+        let vEPesada = Math.ceil((totais.ePesada * 4) / 10) + totais.ePesada;
+
+        // 3. O restante conforme antes
+        let vCol = totais.col * 2; // Coluna + Travessa = 2 vols
+        let vPrat = totais.prat;
+        let vBand = Math.ceil(totais.band / 6);
+        let vMdf = totais.mdf;
+
+        const totalVol = vELeve + vEPesada + vCol + vPrat + vBand + vMdf;
+
+        // Peso Total
+        const totalPeso = (totais.eLeve * PESOS.estante_leve) +
+                          (totais.ePesada * PESOS.estante_pesada) +
+                          (totais.col * PESOS.coluna_av) +
+                          (totais.prat * PESOS.prat_av) +
+                          (totais.band * PESOS.band_av) +
+                          (totais.mdf * PESOS.mdf);
+
+        document.getElementById('res-vol').innerText = totalVol;
+        document.getElementById('res-peso').innerText = totalPeso.toFixed(2).replace('.', ',');
+        document.getElementById('box-resultado').style.display = 'block';
+    }
+
+    adicionarLinha();
+</script>
+</body>
+</html>
