@@ -16,25 +16,27 @@
         body { 
             font-family: 'Segoe UI', sans-serif; 
             background-color: #f4f4f4; 
-            padding: 20px; 
+            padding: 10px; 
             display: flex; 
             flex-direction: column;
             align-items: center; 
-            justify-content: center; 
+            justify-content: flex-start; 
             min-height: 100vh;
             margin: 0;
         }
 
-        body h1 {
-            font-size: 5vh;
+        .titulo-site {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            margin: 20px 0;
+            text-align: center;
         }
 
         .container { 
             background: var(--bg); 
-            padding: 30px; 
+            padding: 20px; 
             border-radius: 12px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-            width: 100%; 
+            width: 95%; 
             max-width: 650px; 
         }
 
@@ -52,34 +54,66 @@
             gap: 10px; 
             margin-bottom: 12px; 
             align-items: center;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            flex-wrap: wrap;
         }
 
-        select, input { 
+        select { 
+            flex: 3; 
+            min-width: 200px;
             padding: 12px; 
             border: 1px solid var(--border); 
             border-radius: 6px; 
             font-size: 14px; 
         }
 
-        select { flex: 3; background-color: #fff; }
-        input[type="number"] { flex: 1; min-width: 80px; }
+        input[type="number"] { 
+            flex: 1; 
+            min-width: 80px; 
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
 
-        .btn-remover { background: none; border: none; color: var(--danger); font-weight: bold; cursor: pointer; font-size: 18px; }
+        .btn-remover { 
+            background: var(--danger); 
+            color: white; 
+            border: none; 
+            font-weight: bold; 
+            cursor: pointer; 
+            padding: 10px 15px;
+            border-radius: 6px;
+        }
+
+        /* AJUSTE RESPONSIVO PARA CELULAR */
+        @media (max-width: 480px) {
+            .item-linha {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            select, input[type="number"], .btn-remover {
+                width: 100%;
+                flex: none;
+            }
+        }
 
         .btn-adicionar { 
             background: var(--success); 
             color: white; 
             border: none; 
-            padding: 12px 20px; 
+            padding: 15px 20px; 
             border-radius: 6px; 
             cursor: pointer; 
             font-weight: bold; 
             margin: 20px 0;
+            width: 100%;
         }
 
         .btn-calcular { 
             width: 100%; 
-            padding: 15px; 
+            padding: 18px; 
             background: var(--primary); 
             color: white; 
             border: none; 
@@ -119,18 +153,17 @@
 
     <div id="box-resultado" class="resultado">
         <span class="titulo-resposta">PV Company</span>
-        <div>Volumes Totais: <span id="res-vol" class="destaque-vols">0</span></div>
-        <div>Peso Total: <span id="res-peso" class="destaque-peso">0</span> KG</div>
+        <div>Volumes Totais: <br><span id="res-vol" class="destaque-vols">0</span></div>
+        <div style="margin-top: 10px;">Peso Total: <br><span id="res-peso" class="destaque-peso">0</span> KG</div>
     </div>
 </div>
 
 <script>
-    // PESOS REAIS (KG por unidade ou kit)
     const PESOS = {
         estante_leve: 10.0,
         estante_pesada: 25.0,
-        coluna_av: 3.5, // Montante + Travessa avulso
-        prat_av: 10.0,  // Longarina
+        coluna_av: 3.5, 
+        prat_av: 10.0,
         band_av: 12.0,
         mdf: 15.0
     };
@@ -149,7 +182,7 @@
                 <option value="mdf">MDF Inteiriço</option>
             </select>
             <input type="number" class="prod-qtd" value="1" min="1">
-            <button class="btn-remover" onclick="this.parentElement.remove()">✕</button>
+            <button class="btn-remover" onclick="this.parentElement.remove()">REMOVER</button>
         `;
         container.appendChild(div);
     }
@@ -169,21 +202,15 @@
             if (tipo === 'mdf') totais.mdf += qtd;
         });
 
-        // 1. Volumes Estante LEVE: (Colunas agrupa 20) + (1 vol bandeja por estante)
         let vELeve = Math.ceil((totais.eLeve * 4) / 20) + totais.eLeve;
-
-        // 2. Volumes Estante PESADA: (Colunas agrupa 10) + (1 vol bandeja por estante)
         let vEPesada = Math.ceil((totais.ePesada * 4) / 10) + totais.ePesada;
-
-        // 3. O restante conforme antes
-        let vCol = totais.col * 2; // Coluna + Travessa = 2 vols
+        let vCol = totais.col * 2;
         let vPrat = totais.prat;
         let vBand = Math.ceil(totais.band / 6);
         let vMdf = totais.mdf;
 
         const totalVol = vELeve + vEPesada + vCol + vPrat + vBand + vMdf;
 
-        // Peso Total
         const totalPeso = (totais.eLeve * PESOS.estante_leve) +
                           (totais.ePesada * PESOS.estante_pesada) +
                           (totais.col * PESOS.coluna_av) +
@@ -194,6 +221,8 @@
         document.getElementById('res-vol').innerText = totalVol;
         document.getElementById('res-peso').innerText = totalPeso.toFixed(2).replace('.', ',');
         document.getElementById('box-resultado').style.display = 'block';
+        
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
 
     adicionarLinha();
