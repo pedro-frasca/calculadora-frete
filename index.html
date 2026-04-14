@@ -3,140 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora PV Company</title>
+    <title>Calculadora PV Company/Estanfort</title>
     <style>
-        :root {
-            --primary: #000000;
-            --success: #28a745;
-            --danger: #d93025;
-            --bg: #ffffff;
-            --border: #e0e0e0;
-        }
+        :root { --primary: #000000; --success: #28a745; --danger: #d93025; --bg: #ffffff; --border: #e0e0e0; }
+        
+        * { box-sizing: border-box; } /* CRITICAL: Garante que padding não estoure a largura */
 
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background-color: #f4f4f4; 
-            padding: 10px; 
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            justify-content: flex-start; 
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .titulo-site {
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
-            margin: 20px 0;
-            text-align: center;
-        }
-
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f4f4; padding: 10px; display: flex; flex-direction: column; align-items: center; margin: 0; }
+        .titulo-site { font-size: clamp(1.5rem, 5vw, 2.5rem); margin: 20px 0; text-align: center; }
+        
         .container { 
             background: var(--bg); 
             padding: 20px; 
             border-radius: 12px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-            width: 95%; 
-            max-width: 650px; 
-        }
-
-        h2 { 
-            color: var(--primary); 
-            text-align: center; 
-            margin-bottom: 25px; 
-            border-bottom: 2px solid var(--primary); 
-            padding-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .item-linha { 
-            display: flex; 
-            gap: 10px; 
-            margin-bottom: 12px; 
-            align-items: center;
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 8px;
-            flex-wrap: wrap;
-        }
-
-        select { 
-            flex: 3; 
-            min-width: 200px;
-            padding: 12px; 
-            border: 1px solid var(--border); 
-            border-radius: 6px; 
-            font-size: 14px; 
-        }
-
-        input[type="number"] { 
-            flex: 1; 
-            min-width: 80px; 
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-        }
-
-        .btn-remover { 
-            background: var(--danger); 
-            color: white; 
-            border: none; 
-            font-weight: bold; 
-            cursor: pointer; 
-            padding: 10px 15px;
-            border-radius: 6px;
-        }
-
-        /* AJUSTE RESPONSIVO PARA CELULAR */
-        @media (max-width: 480px) {
-            .item-linha {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            select, input[type="number"], .btn-remover {
-                width: 100%;
-                flex: none;
-            }
-        }
-
-        .btn-adicionar { 
-            background: var(--success); 
-            color: white; 
-            border: none; 
-            padding: 15px 20px; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            margin: 20px 0;
-            width: 100%;
-        }
-
-        .btn-calcular { 
             width: 100%; 
-            padding: 18px; 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-size: 18px; 
-            font-weight: bold; 
-            cursor: pointer;
+            max-width: 850px; 
         }
 
+        h2 { color: var(--primary); text-align: center; margin-bottom: 25px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; text-transform: uppercase; }
+        
+        .item-linha { display: flex; gap: 8px; margin-bottom: 12px; align-items: flex-end; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid var(--border); flex-wrap: wrap; }
+        .col-prod { flex: 2; min-width: 200px; }
+        .col-med { width: 70px; }
+        label { font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px; }
+        select, input { padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; width: 100%; }
+
+        .btn-remover { background: var(--danger); color: white; border: none; font-weight: bold; cursor: pointer; padding: 10px; border-radius: 6px; }
+        .btn-adicionar { background: var(--success); color: white; border: none; padding: 15px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; margin: 20px 0; width: 100%; }
+        .btn-calcular { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+
+        /* AJUSTE NO LAYOUT DO RESULTADO */
         .resultado { 
             margin-top: 25px; 
-            padding: 20px; 
-            background: #f9f9f9; 
+            padding: 15px; 
+            background: white; 
             border-radius: 10px; 
             display: none; 
-            text-align: center; 
-            border: 1px solid #ddd;
+            border: 1px solid #d2e3fc; 
+            width: 100%; /* Ocupa 100% do container pai */
         }
 
-        .titulo-resposta { font-weight: bold; display: block; margin-bottom: 10px; text-decoration: underline; }
-        .resultado div { font-size: 20px; margin-bottom: 5px; }
-        .destaque-vols { color: var(--success); font-weight: bold; font-size: 28px; }
-        .destaque-peso { color: var(--danger); font-weight: bold; font-size: 28px; }
+        .res-resumo { font-size: 18px; font-weight: bold; margin-bottom: 15px; text-align: center; background: #eee; padding: 15px; border-radius: 8px; border: 2px solid #000; line-height: 1.4; }
+        
+        .cf-linha { display: flex; gap: 10px; border-bottom: 1px solid #eee; padding: 10px 0; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+        .cf-item { flex: 1; min-width: 70px; font-size: 11px; }
+        .cf-item b { display: block; font-size: 14px; color: #333; }
+        .tag-v { color: #888; font-weight: bold; min-width: 25px; }
+
+        @media (max-width: 480px) {
+            .item-linha { flex-direction: column; align-items: stretch; }
+            .col-med, .col-prod { width: 100%; }
+            .res-resumo { font-size: 16px; }
+        }
     </style>
 </head>
 <body>
@@ -145,83 +64,122 @@
 
 <div class="container">
     <h2>Cotação</h2>
-    
     <div id="lista-itens"></div>
-
     <button class="btn-adicionar" onclick="adicionarLinha()">+ Adicionar Produto</button>
     <button class="btn-calcular" onclick="calcularTudo()">GERAR TOTAIS</button>
 
     <div id="box-resultado" class="resultado">
-        <span class="titulo-resposta">PV Company</span>
-        <div>Volumes Totais: <br><span id="res-vol" class="destaque-vols">0</span></div>
-        <div style="margin-top: 10px;">Peso Total: <br><span id="res-peso" class="destaque-peso">0</span> KG</div>
+        <div class="res-resumo">
+            VOLUMES TOTAIS: <span id="res-vol" style="color: var(--success);">0</span> | 
+            PESO TOTAL: <span id="res-peso" style="color: var(--danger);">0</span> KG
+        </div>
+        
+        <p style="font-size: 14px;"><strong>Detalhamento para Central do Frete:</strong></p>
+        <div id="lista-cf"></div>
     </div>
 </div>
 
 <script>
-    const PESOS = {
-        estante_leve: 10.0,
-        estante_pesada: 25.0,
-        coluna_av: 3.5, 
-        prat_av: 10.0,
-        band_av: 12.0,
-        mdf: 15.0
+    const PADROES = {
+        estante_l: { p: 10, a: 30, l: 90, c: 20 },
+        estante_p: { p: 25, a: 40, l: 90, c: 20 },
+        coluna_avulsa: { p: 10, a: 5, l: 10, c: 200 }, 
+        prateleira: { p: 7, a: 10, l: 5, c: 200 },    
+        bandeja: { p: 10, a: 30, l: 60, c: 20 },      
+        mdf: { p: 13, a: 2, l: 60, c: 180 }
     };
+
+    function atualizarMedidas(select) {
+        const linha = select.closest('.item-linha');
+        const d = PADROES[select.value];
+        linha.querySelector('.val-a').value = d.a;
+        linha.querySelector('.val-l').value = d.l;
+        linha.querySelector('.val-c').value = d.c;
+    }
 
     function adicionarLinha() {
         const container = document.getElementById('lista-itens');
         const div = document.createElement('div');
         div.className = 'item-linha';
+        const inicial = PADROES.estante_l;
+
         div.innerHTML = `
-            <select class="prod-tipo">
-                <option value="estante_leve">Estante LINHA LEVE #26 (até 20 col/vol)</option>
-                <option value="estante_pesada">Estante LINHA PESADA #22 (até 10 col/vol)</option>
-                <option value="coluna_av">COLUNA (Montante + Travessa)</option>
-                <option value="prat_av">PRATELEIRA (Par de Longarina)</option>
-                <option value="band_av">BANDEJAS DE AÇO</option>
-                <option value="mdf">MDF Inteiriço</option>
-            </select>
-            <input type="number" class="prod-qtd" value="1" min="1">
-            <button class="btn-remover" onclick="this.parentElement.remove()">REMOVER</button>
+            <div class="col-prod"><label>Produto</label>
+                <select class="prod-tipo" onchange="atualizarMedidas(this)">
+                    <option value="estante_l">Estante LINHA LEVE #26 (até 20 col/vol)</option>
+                    <option value="estante_p">Estante LINHA PESADA #22 (até 10 col/vol)</option>
+                    <option value="coluna_avulsa">COLUNA (Montante + Travessa)</option>
+                    <option value="prateleira">PRATELEIRA (Par de Longarina)</option>
+                    <option value="bandeja">BANDEJAS DE AÇO</option>
+                    <option value="mdf">MDF Inteiriço</option>
+                </select>
+            </div>
+            <div class="col-med" style="width: 60px;"><label>Qtd</label><input type="number" class="val-q" value="1" min="1"></div>
+            <div class="col-med"><label>Alt(cm)</label><input type="number" class="val-a" value="${inicial.a}"></div>
+            <div class="col-med"><label>Larg(cm)</label><input type="number" class="val-l" value="${inicial.l}"></div>
+            <div class="col-med"><label>Comp(cm)</label><input type="number" class="val-c" value="${inicial.c}"></div>
+            <button class="btn-remover" onclick="this.parentElement.remove()">✕</button>
         `;
         container.appendChild(div);
     }
 
+    function renderLinhaCF(id, qtd, peso, a, l, c) {
+        return `
+            <div class="cf-linha">
+                <span class="tag-v">#${id}</span>
+                <div class="cf-item"><label>Qtd</label><b>${qtd}</b></div>
+                <div class="cf-item"><label>Peso (kg)</label><b>${peso}</b></div>
+                <div class="cf-item"><label>Altura (cm)</label><b>${a}</b></div>
+                <div class="cf-item"><label>Largura (cm)</label><b>${l}</b></div>
+                <div class="cf-item"><label>Comp. (cm)</label><b>${c}</b></div>
+            </div>
+        `;
+    }
+
     function calcularTudo() {
         const linhas = document.querySelectorAll('.item-linha');
-        let totais = { eLeve: 0, ePesada: 0, col: 0, prat: 0, band: 0, mdf: 0 };
+        const listaCF = document.getElementById('lista-cf');
+        listaCF.innerHTML = "";
+        let totalPeso = 0, totalVols = 0, idVol = 1;
 
         linhas.forEach(linha => {
             const tipo = linha.querySelector('.prod-tipo').value;
-            const qtd = parseInt(linha.querySelector('.prod-qtd').value) || 0;
-            if (tipo === 'estante_leve') totais.eLeve += qtd;
-            if (tipo === 'estante_pesada') totais.ePesada += qtd;
-            if (tipo === 'coluna_av') totais.col += qtd;
-            if (tipo === 'prat_av') totais.prat += qtd;
-            if (tipo === 'band_av') totais.band += qtd;
-            if (tipo === 'mdf') totais.mdf += qtd;
+            const qtd = parseInt(linha.querySelector('.val-q').value) || 0;
+            const a = linha.querySelector('.val-a').value;
+            const l = linha.querySelector('.val-l').value;
+            let c = parseInt(linha.querySelector('.val-c').value);
+
+            if (qtd > 0) {
+                if (tipo === "coluna_avulsa") {
+                    listaCF.innerHTML += renderLinhaCF(idVol++, qtd, (qtd * 10), a, l, c);
+                    listaCF.innerHTML += renderLinhaCF(idVol++, qtd, (qtd * 5), 14, 8, 91);
+                    totalPeso += (qtd * 15); totalVols += (qtd * 2);
+                } else if (tipo === "prateleira") {
+                    listaCF.innerHTML += renderLinhaCF(idVol++, qtd, (qtd * 7), a, l, c + 20); 
+                    totalPeso += (qtd * 7); totalVols += qtd;
+                } else if (tipo === "bandeja") {
+                    let vols = Math.ceil(qtd / 6);
+                    listaCF.innerHTML += renderLinhaCF(idVol++, vols, (vols * 10), a, l, c);
+                    totalPeso += (vols * 10); totalVols += vols;
+                } else if (tipo === "estante_l" || tipo === "estante_p") {
+                    let colPacote = (tipo === "estante_l") ? 20 : 10;
+                    let pCol = (tipo === "estante_l") ? 5 : 10;
+                    let pBand = (tipo === "estante_l") ? 5 : 15;
+                    let volsCol = Math.ceil((qtd * 4) / colPacote);
+                    listaCF.innerHTML += renderLinhaCF(idVol++, volsCol, (volsCol * pCol), a, l, c); 
+                    listaCF.innerHTML += renderLinhaCF(idVol++, qtd, (qtd * pBand), a, l, c); 
+                    totalPeso += (volsCol * pCol) + (qtd * pBand);
+                    totalVols += (volsCol + qtd);
+                } else {
+                    listaCF.innerHTML += renderLinhaCF(idVol++, qtd, (qtd * 13), a, l, c);
+                    totalPeso += (qtd * 13); totalVols += qtd;
+                }
+            }
         });
 
-        let vELeve = Math.ceil((totais.eLeve * 4) / 20) + totais.eLeve;
-        let vEPesada = Math.ceil((totais.ePesada * 4) / 10) + totais.ePesada;
-        let vCol = totais.col * 2;
-        let vPrat = totais.prat;
-        let vBand = Math.ceil(totais.band / 6);
-        let vMdf = totais.mdf;
-
-        const totalVol = vELeve + vEPesada + vCol + vPrat + vBand + vMdf;
-
-        const totalPeso = (totais.eLeve * PESOS.estante_leve) +
-                          (totais.ePesada * PESOS.estante_pesada) +
-                          (totais.col * PESOS.coluna_av) +
-                          (totais.prat * PESOS.prat_av) +
-                          (totais.band * PESOS.band_av) +
-                          (totais.mdf * PESOS.mdf);
-
-        document.getElementById('res-vol').innerText = totalVol;
+        document.getElementById('res-vol').innerText = totalVols;
         document.getElementById('res-peso').innerText = totalPeso.toFixed(2).replace('.', ',');
         document.getElementById('box-resultado').style.display = 'block';
-        
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
 
